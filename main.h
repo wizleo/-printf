@@ -9,6 +9,8 @@
 
 int _putchar(char c);
 void _puts(char *str);
+void _prints(char *s);
+void print_int(int n);
 int _strlen(char *s);
 int _printf(const char *format, ...);
 char *convert_to(char representation[], unsigned int num, int base);
