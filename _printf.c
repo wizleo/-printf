@@ -1,71 +1,52 @@
 #include "main.h"
-
 /**
- * _printf - produces output according to a format
- * @format: format string containing the characters and the specifiers
- * Description: this function will call the get_print() function that will
- * determine which printing function to call depending on the conversion
- * specifiers contained into fmt
- * Return: length of the formatted output string
- */
+  * _printf - function that prints to std
+  * @format: character string
+  * Return: the number of characters printed
+  * excluding the null byte used to end output to strings
+  */
+
 int _printf(const char *format, ...)
 {
-	int (*pfunc)(va_list, flags_t *);
-	const char *p;
-	va_list arguments;
-	flags_t flags = {0, 0, 0};
+	int i = 0, cnt = 0;
+	va_list args;
 
-	register int count = 0;
-
-	va_start(arguments, format);
-	if (!format || (format[0] == '%' && !format[1]))
-		return (-1);
-	if (format[0] == '%' && format[1] == ' ' && !format[2])
-		return (-1);
-	for (p = format; *p; p++)
+	va_start(args, format);
+	while (format[i] != '\0')
 	{
-		if (*p == '%')
+		if (format[i] != '%') /* first check */
 		{
-			p++;
-			if (*p == '%')
+			_putchar(format[i]);
+			cnt++;
+		}
+		else if (format[i] == '%') /* second check */
+		{
+			if (format[i + 1] == '%') /* third check */
 			{
-				count += _putchar('%');
-				continue;
+				_putchar('%');
+				cnt++, i++;
 			}
-			while (get_flag(*p, &flags))
-				p++;
-			pfunc = get_print(*p);
-			count += (pfunc)
-				? pfunc(arguments, &flags)
-				: _printf("%%%c", *p);
-		} else
-			count += _putchar(*p);
+			else if (format[i + 1] == 'c') /* fourth check */
+			{
+				_putchar(va_arg(args, int));
+				cnt++, i++;
+			}
+			else if (format[i + 1] == 's') /* fifth check */
+			{
+				_prints(va_arg(args, char *));
+				cnt++, i++;
+			}
+			else if (format[i + 1] == 'i' || format[i + 1] == 'd') /* sixth check */
+			{
+				print_int(va_arg(args, int));
+				cnt++, i++;
+			}
+		}
+		i++;
 	}
-	_putchar(-1);
-	va_end(arguments);
-	return (count);
+	va_end(args);
+	return (cnt);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
