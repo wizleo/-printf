@@ -39,7 +39,9 @@ int _printf(const char *format, ...)
 			else if (format[i + 1] == 'i' || format[i + 1] == 'd') /* sixth check */
 			{
 		
-				int print_int(va_list l, flags_t *f)
+				
+				print_int(va_arg(args, int));
+			        
 				cnt++, i++;
 			}
 		}
