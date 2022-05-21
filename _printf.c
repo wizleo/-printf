@@ -1,80 +1,47 @@
-#include <stdarg.h>
-#include "holberton.h"
-#include <stdio.h>
-
+#include "main.h"
 /**
-  * _printf - produces output according to a format.
-  * @format: a character string.
-  * Return: number of characters printed(
-  * excluding the null terminator)
+  * _printf - function that prints to std
+  * @format: character string
+  * Return: the number of characters printed
+  * excluding the null byte used to end output to strings
   */
 
 int _printf(const char *format, ...)
 {
-	int count;
-	int total = 0;
-	va_list args;
-	int flag = 0;
+	int count = 0;
 
-	if (format == NULL)
-		return (0);
+	va_list args;
+	int i = 0, (*func_select)(va_list);
 
 	va_start(args, format);
-	for (count = 0; *(format + count) != '\0'; count++)
+
+	if (format[0] == '%' && format[1] == '\0')
+		return (count);
+	while (format[i] != '\0')
 	{
-		if (format[count] == '%')
+		if (format[i] != '%')
 		{
-			flag = 1;
-		}
-		else if (flag == 1)
-		{
-			flag = 0;
-			switch (format[count])
-			{
-				case 'c':
-					_putchar(va_arg(args, int));
-					total += 1;
-					break;
-				case 's':
-					total += _print_str(va_arg(args, char *));
-					break;
-				case '%':
-					_putchar('%');
-					total += 1;
-					break;
-				case 'd':
-					total += _print_int((long)(va_arg(args, int)));
-					break;
-				case 'i':
-					total += _print_int((long)(va_arg(args, int)));
-					break;
-				case 'b':
-					total += to_Binary(va_arg(args, int));
-					break;
-				case 'u':
-					total += _print_int(va_arg(args, unsigned int));
-					break;
-				case 'o':
-					total += to_Octal(va_arg(args, int));
-					break;
-				case 'x':
-					total += to_Hexa(va_arg(args, int));
-					break;
-				case 'X':
-					total += to_Hexa(va_arg(args, int));
-					break;
-				default:
-					_putchar('%');
-					_putchar(format[count]);
-					total += 2;
-			}
+			count += _putchar(format[i]);
 		}
 		else
 		{
-			_putchar(format[count]);
-			total += 1;
+			if (format[i + 1] == '%')
+			{
+				count += _putchar('%');
+				i++;
+			}
+			else
+			{
+				func_select = choice(format[i + 1]);
+				if (func_select != NULL)
+				{
+					count += func_select(args);
+					i++;
+				}
+			}
 		}
+		i++;
 	}
 	va_end(args);
-	return (total);
+	return (count);
 }
