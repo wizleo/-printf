@@ -1,52 +1,80 @@
-#include "main.h"
+#include <stdarg.h>
+#include "holberton.h"
+#include <stdio.h>
+
 /**
-  * _printf - function that prints to std
-  * @format: character string
-  * Return: the number of characters printed
-  * excluding the null byte used to end output to strings
+  * _printf - produces output according to a format.
+  * @format: a character string.
+  * Return: number of characters printed(
+  * excluding the null terminator)
   */
 
 int _printf(const char *format, ...)
 {
-	int i = 0, cnt = 0;
+	int count;
+	int total = 0;
 	va_list args;
+	int flag = 0;
+
+	if (format == NULL)
+		return (0);
 
 	va_start(args, format);
-	while (format[i] != '\0')
+	for (count = 0; *(format + count) != '\0'; count++)
 	{
-		if (format[i] != '%') /* first check */
+		if (format[count] == '%')
 		{
-			_putchar(format[i]);
-			cnt++;
+			flag = 1;
 		}
-		else if (format[i] == '%') /* second check */
+		else if (flag == 1)
 		{
-			if (format[i + 1] == '%') /* third check */
+			flag = 0;
+			switch (format[count])
 			{
-				_putchar('%');
-				cnt++, i++;
-			}
-			else if (format[i + 1] == 'c') /* fourth check */
-			{
-				_putchar(va_arg(args, int));
-				cnt++, i++;
-			}
-			else if (format[i + 1] == 's') /* fifth check */
-			{
-				_printf(va_arg(args, char *));
-				cnt++, i++;
-			}
-			else if (format[i + 1] == 'i' || format[i + 1] == 'd') /* sixth check */
-			{
-		
-				
-				print_int(va_arg(args, int));
-			        
-				cnt++, i++;
+				case 'c':
+					_putchar(va_arg(args, int));
+					total += 1;
+					break;
+				case 's':
+					total += _print_str(va_arg(args, char *));
+					break;
+				case '%':
+					_putchar('%');
+					total += 1;
+					break;
+				case 'd':
+					total += _print_int((long)(va_arg(args, int)));
+					break;
+				case 'i':
+					total += _print_int((long)(va_arg(args, int)));
+					break;
+				case 'b':
+					total += to_Binary(va_arg(args, int));
+					break;
+				case 'u':
+					total += _print_int(va_arg(args, unsigned int));
+					break;
+				case 'o':
+					total += to_Octal(va_arg(args, int));
+					break;
+				case 'x':
+					total += to_Hexa(va_arg(args, int));
+					break;
+				case 'X':
+					total += to_Hexa(va_arg(args, int));
+					break;
+				default:
+					_putchar('%');
+					_putchar(format[count]);
+					total += 2;
 			}
 		}
-		i++;
+		else
+		{
+			_putchar(format[count]);
+			total += 1;
+		}
 	}
 	va_end(args);
-	return (cnt);
+	return (total);
 }
